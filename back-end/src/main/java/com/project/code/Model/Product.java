@@ -1,44 +1,64 @@
 package com.project.code.Model;
-
-
-public class Product {
-
-// 1. Add 'id' field:
-//    - Type: private long 
-//    - This field will be auto-incremented.
-//    - Use @Id to mark it as the primary key.
-//    - Use @GeneratedValue(strategy = GenerationType.IDENTITY) to auto-increment it.
-
-// 2. Add 'name' field:
-//    - Type: private String
-//    - This field cannot be empty, use the @NotNull annotation to enforce this rule.
-
-// 3. Add 'category' field:
-//    - Type: private String
-//    - This field cannot be empty, use the @NotNull annotation to enforce this rule.
-
-// 4. Add 'price' field:
-//    - Type: private Double
-//    - This field cannot be empty, use the @NotNull annotation to enforce this rule.
-
-// 5. Add 'sku' field:
-//    - Type: private String
-//    - This field cannot be empty, must be unique, use the @NotNull annotation to enforce this rule.
-//    - Use the @Table annotation with uniqueConstraints to ensure the 'sku' column is unique.
-
-//    Example: @Table(name = "product", uniqueConstraints = @UniqueConstraint(columnNames = "sku"))
-
-// 6. Add relationships:
-//    - **Inventory**: A product can have multiple inventory entries.
-//    - Use @OneToMany(mappedBy = "product") to reflect the one-to-many relationship with Inventory.
-//    - Use @JsonManagedReference("inventory-product") to manage bidirectional relationships and avoid circular references.
-
-// 7. Add @Entity annotation:
-//    - Use @Entity above the class name to mark it as a JPA entity.
-
-// 8. Add Getters and Setters:
-//    - Add getter and setter methods for all fields (id, name, category, price, sku).
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+@Entity
+public class Inventory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JsonBackReference("inventory-product")
+    @JoinColumn(name = "product_id")
+    private Product product;
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    @JsonBackReference("inventory-store")
+    private Store store;
+    private Integer stockLevel;
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public Product getProduct() {
+        return product;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+    public Store getStore() {
+        return store;
+    }
+    public void setStore(Store store) {
+        this.store = store;
+    }
+    public Integer getStockLevel() {
+        return stockLevel;
+    }
+    public void setStockLevel(Integer stockLevel) {
+        this.stockLevel = stockLevel;
+    }
+    // Constructors (if necessary)
+    public Inventory() {
+    }
+    public Inventory(Product product, Store store, Integer stockLevel) {
+        this.product = product;
+        this.store = store;
+        this.stockLevel = stockLevel;
+    }
+    public String toString() {
+        return "Inventory{" +
+                "id=" + id +
+                ", product=" + (product != null ? product.getId() : "null") +
+                ", store=" + (store != null ? store.getId() : "null") +
+                ", stockLevel=" + stockLevel +
+                '}';
+    }
 }
-
-
